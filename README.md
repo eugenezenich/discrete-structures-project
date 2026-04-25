@@ -740,3 +740,423 @@ index.html:
 </body>
 </html>
 ```
+
+Презентация руководителя
+```
+\documentclass[12pt,aspectratio=169]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian]{babel}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+
+% Цвета
+\definecolor{mainblue}{RGB}{102, 126, 234}
+\definecolor{codebg}{RGB}{240, 244, 255}
+\definecolor{lightbg}{RGB}{248, 249, 250}
+\definecolor{hardred}{RGB}{220, 50, 50}
+
+% Тема
+\usetheme{Madrid}
+\setbeamercolor{title}{fg=white, bg=mainblue}
+\setbeamercolor{frametitle}{fg=white, bg=mainblue}
+\setbeamercolor{structure}{fg=mainblue}
+\setbeamercolor{block title}{fg=white, bg=mainblue}
+\setbeamercolor{block body}{fg=black, bg=lightbg}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}[circle]
+
+% Настройка листинга
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\scriptsize,
+    backgroundcolor=\color{codebg},
+    frame=single,
+    framerule=0.5pt,
+    rulecolor=\color{mainblue!50},
+    numbers=left,
+    numbersep=5pt,
+    numberstyle=\tiny\color{gray},
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{red},
+    commentstyle=\color{green!40!black},
+    showstringspaces=false,
+    breaklines=true,
+    tabsize=4,
+    aboveskip=6pt,
+    belowskip=6pt
+}
+
+\title{Работа с графами}
+\subtitle{Проект по дискретным структурам}
+\author{Выполнили студенты 02262-ДБ}
+\date{Белоусов Александр \quad Унжаков Александр \quad Зенкин Евгений}
+
+\begin{document}
+
+% ==================== ТИТУЛЬНЫЙ ====================
+\begin{frame}
+    \titlepage
+    \begin{center}
+        
+    \end{center}
+\end{frame}
+
+% ==================== ЗНАКОМСТВО С ГРУППОЙ ====================
+\begin{frame}
+    \frametitle{Знакомство с группой}
+    
+    \vspace{-10pt}
+    \begin{columns}[T]
+        \column{0.33\textwidth}
+            \begin{center}
+                \fbox{%
+                \begin{tikzpicture}
+                    \fill[mainblue!10] (0,0) rectangle (3,3.5);
+                    \node at (1.5,2.5) {\large ��};
+                    \node at (1.5,1.5) {\small Фото};
+                \end{tikzpicture}%
+                }
+                \vspace{5pt}
+                
+                \textbf{Белоусов Александр}
+            \end{center}
+            
+        \column{0.33\textwidth}
+            \begin{center}
+                \fbox{%
+                \begin{tikzpicture}
+                    \fill[mainblue!10] (0,0) rectangle (3,3.5);
+                    \node at (1.5,2.5) {\large ��};
+                    \node at (1.5,1.5) {\small Фото};
+                \end{tikzpicture}%
+                }
+                \vspace{5pt}
+                
+                \textbf{Унжаков Александр}
+            \end{center}
+            
+        \column{0.33\textwidth}
+            \begin{center}
+                \fbox{%
+                \begin{tikzpicture}
+                    \fill[mainblue!10] (0,0) rectangle (3,3.5);
+                    \node at (1.5,2.5) {\large ��};
+                    \node at (1.5,1.5) {\small Фото};
+                \end{tikzpicture}%
+                }
+                \vspace{5pt}
+                
+                \textbf{Зенкин Евгений}
+            \end{center}
+    \end{columns}
+\end{frame}
+
+% ==================== ЧТО СДЕЛАЛИ ====================
+\begin{frame}
+    \frametitle{Обзор проекта}
+    
+    \begin{block}{Что сделано}
+        \begin{itemize}
+            \item Веб-приложение для работы с графами
+            \item Реализовано \textbf{13 задач} (0--12) по дискретным структурам
+            \item Визуализация графов в браузере
+            \item Проверка пользовательских ответов
+            \item Поддержка взвешенных и невзвешенных графов
+        \end{itemize}
+    \end{block}
+    
+    \vspace{8pt}
+    \begin{block}{Технологии}
+        \begin{itemize}
+            \item Python + Flask (серверная часть, \textasciitilde200 строк)
+            \item PyVis (визуализация графов)
+            \item HTML/CSS/JavaScript (интерфейс, \textasciitilde170 строк)
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+% ==================== РАСПРЕДЕЛЕНИЕ ЗАДАЧ ====================
+\begin{frame}
+    \frametitle{Распределение задач}
+    
+    \begin{columns}[T]
+        \column{0.3\textwidth}
+            \begin{block}{Белоусов Александр}
+                \begin{itemize}
+                    \item Задача 0 — Анализ графа
+                \end{itemize}
+                \vspace{5pt}
+                \begin{center}
+                    \textbf{1 задача}
+                \end{center}
+            \end{block}
+            
+        \column{0.3\textwidth}
+            \begin{block}{Унжаков Александр}
+                \begin{itemize}
+                    \item Задачи 1-6
+                    \item Интерфейс (HTML/CSS)
+                \end{itemize}
+                \vspace{5pt}
+                \begin{center}
+                    \textbf{6 задач}
+                \end{center}
+            \end{block}
+            
+        \column{0.3\textwidth}
+            \begin{block}{Зенкин Евгений}
+                \begin{itemize}
+                    \item Задачи 7-12
+                    \item Визуализация (PyVis)
+                \end{itemize}
+                \vspace{5pt}
+                \begin{center}
+                    \textbf{6 задач}
+                \end{center}
+            \end{block}
+    \end{columns}
+\end{frame}
+
+% ==================== САМЫЕ СЛОЖНЫЕ ЗАДАЧИ ====================
+\begin{frame}
+    \frametitle{Три самые сложные задачи}
+    
+    \begin{columns}[T]
+        \column{0.3\textwidth}
+            \begin{block}{\centering Задача 7 \\ Алгоритм Прима}
+                \begin{itemize}
+                    \item Работа с весами
+                    \item Поиск минимального ребра
+                    \item Построение дерева
+                \end{itemize}
+                \vspace{5pt}
+                \begin{center}
+                    \textcolor{hardred}{\textbf{Сложность: 4 из 5}}
+                \end{center}
+            \end{block}
+            
+        \column{0.3\textwidth}
+            \begin{block}{\centering Задача 10-11 \\ Код Прюфера}
+                \begin{itemize}
+                    \item Кодирование дерева
+                    \item Обратное восстановление
+                    \item Работа со степенями
+                \end{itemize}
+                \vspace{5pt}
+                \begin{center}
+                    \textcolor{hardred}{\textbf{Сложность: 4 из 5}}
+                \end{center}
+            \end{block}
+            
+        \column{0.3\textwidth}
+            \begin{block}{\centering Задача 12 \\ Раскраска}
+                \begin{itemize}
+                    \item Жадный алгоритм
+                    \item Хроматическое число
+                    \item Минимизация цветов
+                \end{itemize}
+                \vspace{5pt}
+                \begin{center}
+                    \textcolor{hardred}{\textbf{Сложность: 3 из 5}}
+                \end{center}
+            \end{block}
+    \end{columns}
+    
+    \vspace{10pt}
+    \begin{center}
+        \small\textit{Сложности возникали из-за неочевидной логики алгоритмов \\ и необходимости визуализации промежуточных результатов}
+    \end{center}
+\end{frame}
+
+% ==================== ЗАДАЧИ (СПИСОК) ====================
+\begin{frame}
+    \frametitle{Все задачи проекта}
+    
+    \begin{columns}[T]
+        \column{0.45\textwidth}
+            \begin{block}{Анализ и обходы}
+                \begin{enumerate}
+                    \setcounter{enumi}{-1}
+                    \item Степени, компоненты, Эйлеров, двудольный
+                    \item DFS обход (показать)
+                    \item DFS обход (проверить)
+                    \item BFS обход (показать)
+                    \item BFS обход (проверить)
+                    \item Число компонент связности
+                    \item Проверка числа компонент
+                \end{enumerate}
+            \end{block}
+            
+        \column{0.45\textwidth}
+            \begin{block}{Алгоритмы}
+                \begin{enumerate}
+                    \setcounter{enumi}{6}
+                    \item Минимальное остовное дерево
+                    \item Кратчайшие пути (Дейкстра)
+                    \item Матрица кратчайших путей
+                    \item Кодирование Прюфера
+                    \item Декодирование Прюфера
+                    \item Раскраска графа
+                \end{enumerate}
+            \end{block}
+    \end{columns}
+    
+\end{frame}
+
+% ==================== ПРИМЕР: DFS ====================
+\begin{frame}[fragile]
+    \frametitle{Пример: Обход в глубину (задача 1)}
+    
+    \begin{lstlisting}
+def task_dfs(matrix):
+    adj = get_adj_list(matrix)
+    n = len(matrix)
+    visited = [False] * n
+    order = []
+    
+    def go(v):
+        visited[v] = True
+        order.append(v)
+        for u in adj[v]:
+            if not visited[u]:
+                go(u)
+    
+    for v in range(n):
+        if not visited[v]:
+            go(v)
+    
+    return order  # например: [0, 1, 3, 2]
+    \end{lstlisting}
+    
+    \begin{center}
+        \footnotesize Рекурсивный обход: идём вглубь до упора, затем возвращаемся
+    \end{center}
+\end{frame}
+
+% ==================== ПРИМЕР: ДЕЙКСТРА ====================
+\begin{frame}[fragile]
+    \frametitle{Пример: Алгоритм Дейкстры (задача 8)}
+    
+    \begin{lstlisting}
+def task_dijkstra(matrix, start):
+    n = len(matrix)
+    dist = [float('inf')] * n
+    dist[start] = 0
+    used = [False] * n
+    
+    for _ in range(n):
+        v = min((i for i in range(n) if not used[i]), 
+                key=lambda i: dist[i], default=-1)
+        if v == -1: break
+        used[v] = True
+        for u in range(n):
+            if matrix[v][u] and not used[u]:
+                new = dist[v] + matrix[v][u]
+                if new < dist[u]:
+                    dist[u] = new
+    
+    return dist  # кратчайшие расстояния до всех вершин
+    \end{lstlisting}
+\end{frame}
+
+% ==================== ВИЗУАЛИЗАЦИЯ ====================
+\begin{frame}
+    \frametitle{Визуализация графов}
+    
+    \begin{columns}[T]
+        \column{0.45\textwidth}
+            \begin{block}{PyVis}
+                \begin{itemize}
+                    \item Интерактивный граф
+                    \item Перетаскивание вершин
+                    \item Масштабирование
+                    \item Цветовая индикация
+                \end{itemize}
+            \end{block}
+            
+            \vspace{3pt}
+            \begin{block}{Обозначения}
+                \begin{itemize}
+                    \item \textcolor{red}{Красные} рёбра — путь/обход
+                    \item \textcolor{gray}{Серые} — остальные
+                    \item Цвет вершин — компоненты
+                \end{itemize}
+            \end{block}
+            
+        \column{0.55\textwidth}
+            \begin{center}
+                \begin{tikzpicture}[scale=0.55, every node/.style={transform shape}]
+                    \node[circle, draw=mainblue, fill=mainblue!20, minimum size=0.6cm] (0) at (0,1.5) {0};
+                    \node[circle, draw=mainblue, fill=mainblue!20, minimum size=0.6cm] (1) at (2.5,2.5) {1};
+                    \node[circle, draw=mainblue, fill=mainblue!20, minimum size=0.6cm] (2) at (5,2.5) {2};
+                    \node[circle, draw=mainblue, fill=mainblue!20, minimum size=0.6cm] (3) at (2.5,0) {3};
+                    \node[circle, draw=mainblue, fill=mainblue!20, minimum size=0.6cm] (4) at (5,0) {4};
+                    
+                    \draw[very thick, red!70] (0) -- (1) node[midway, above left, font=\tiny] {2};
+                    \draw[thick, gray!50] (1) -- (2) node[midway, above, font=\tiny] {3};
+                    \draw[very thick, red!70] (0) -- (3) node[midway, left, font=\tiny] {6};
+                    \draw[thick, gray!50] (1) -- (3) node[midway, right, font=\tiny] {8};
+                    \draw[very thick, red!70] (1) -- (4) node[midway, right, font=\tiny] {5};
+                    \draw[thick, gray!50] (2) -- (4) node[midway, right, font=\tiny] {7};
+                    \draw[thick, gray!50] (3) -- (4) node[midway, below, font=\tiny] {9};
+                \end{tikzpicture}
+                
+                \vspace{3pt}
+                \footnotesize MST: красные рёбра — остовное дерево
+            \end{center}
+    \end{columns}
+\end{frame}
+
+% ==================== ЗАКЛЮЧЕНИЕ ====================
+\begin{frame}
+    \frametitle{Заключение}
+    
+    \begin{columns}[T]
+        \column{0.45\textwidth}
+            \begin{block}{Результаты}
+                \begin{itemize}
+                    \item Реализованы все 13 задач
+                    \item Работающий веб-интерфейс
+                    \item Интерактивная визуализация
+                    \item Проверка ответов пользователя
+                    \item Поддержка разных типов графов
+                \end{itemize}
+            \end{block}
+            
+        \column{0.45\textwidth}
+            \begin{block}{Алгоритмы}
+                \begin{itemize}
+                    \item DFS и BFS
+                    \item Алгоритм Прима (MST)
+                    \item Алгоритм Дейкстры
+                    \item Флойд-Уоршелл
+                    \item Кодирование Прюфера
+                    \item Жадная раскраска
+                \end{itemize}
+            \end{block}
+    \end{columns}
+    
+\end{frame}
+
+% ==================== ФИНАЛ ====================
+\begin{frame}
+    \begin{center}
+        \Huge\textcolor{mainblue}{Спасибо за внимание!}
+        
+        \vspace{25pt}
+        \Large Вопросы?
+        
+        \vspace{30pt}
+        \normalsize
+        Белоусов Александр \quad Унжаков Александр \quad Зенкин Евгений
+        
+        \vspace{5pt}
+        Группа 02262-ДБ
+    \end{center}
+\end{frame}
+
+\end{document}
+```
