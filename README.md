@@ -334,6 +334,16 @@ def task_5(matrix):
     vis = draw_graph(matrix, "task5.html", node_colors=node_colors)
     return {"count": len(comps), "comps": comps, "vis": vis}
 
+def task_6_check(matrix, user_answer):
+    correct = task_5(matrix)['count']
+    vis = task_5(matrix)['vis']
+    return {
+        "correct": correct,
+        "user": user_answer,
+        "ok": correct == user_answer,
+        "vis": vis
+    }
+
 
 def task_7(matrix):
     n = len(matrix)
@@ -470,41 +480,63 @@ def index():
 @app.route('/solve', methods=['POST'])
 def solve():
     data = request.json
-    task = data['task']
+    task = str(data['task'])  # <-- ПРИНУДИТЕЛЬНО В СТРОКУ
     matrix = parse_matrix(data['matrix'])
+    extra = data.get('extra', '').strip()
 
     try:
-        if task == 0:
+        # Проверка: задачи с ОДНИМ числом
+        if task in ['6', '8']:
+            if not extra:
+                return jsonify({"ok": False, "error": "Введите число!"})
+            try:
+                extra_val = int(extra)
+            except ValueError:
+                return jsonify({"ok": False, "error": f"Нужно ввести ОДНО целое число, а не '{extra}'"})
+
+        # Проверка: задачи со СПИСКОМ чисел
+        elif task in ['2', '4', '11']:
+            if not extra:
+                return jsonify({"ok": False, "error": "Введите числа через пробел!"})
+            try:
+                extra_val = [int(x) for x in extra.split()]
+            except ValueError:
+                return jsonify({"ok": False, "error": f"Нужно ввести числа через пробел, а не '{extra}'"})
+
+        # Выполнение задач
+        if task == '0':
             r = task_0(matrix)
-        elif task == 1:
+        elif task == '1':
             r = task_1_3(matrix, 'dfs')
-        elif task == 2:
-            r = task_2_4(matrix, [int(x) for x in data['extra'].split()], 'dfs')
-        elif task == 3:
+        elif task == '2':
+            r = task_2_4(matrix, extra_val, 'dfs')
+        elif task == '3':
             r = task_1_3(matrix, 'bfs')
-        elif task == 4:
-            r = task_2_4(matrix, [int(x) for x in data['extra'].split()], 'bfs')
-        elif task == 5:
+        elif task == '4':
+            r = task_2_4(matrix, extra_val, 'bfs')
+        elif task == '5':
             r = task_5(matrix)
-        elif task == 6:
-            r = {"ok": task_5(matrix)['count'] == int(data['extra']), "correct": task_5(matrix)['count']}
-        elif task == 7:
+        elif task == '6':
+            r = task_6_check(matrix, extra_val)
+        elif task == '7':
             r = task_7(matrix)
-        elif task == 8:
-            r = task_8(matrix, int(data['extra']))
-        elif task == 9:
+        elif task == '8':
+            r = task_8(matrix, extra_val)
+        elif task == '9':
             r = task_9(matrix)
-        elif task == 10:
+        elif task == '10':
             r = task_10(matrix)
-        elif task == 11:
-            r = task_11([int(x) for x in data['extra'].split()], len(matrix))
-        elif task == 12:
+        elif task == '11':
+            r = task_11(extra_val, len(matrix))
+        elif task == '12':
             r = task_12(matrix)
         else:
-            return jsonify({"ok": False, "error": "Нет такой задачи"})
+            return jsonify({"ok": False, "error": f"Неизвестная задача: {task}"})
+
         return jsonify({"ok": True, "result": r})
+
     except Exception as e:
-        return jsonify({"ok": False, "error": str(e)})
+        return jsonify({"ok": False, "error": f"Ошибка: {str(e)}"})
 
 
 if __name__ == '__main__':
