@@ -204,16 +204,12 @@ def draw_graph(matrix, filename, highlight_nodes=None, highlight_edges=None, nod
     return filename
 
 
-# ============ ЗАДАЧИ ============
-
+# ============ ЗАДАЧА 0 ============
 def task_0(matrix):
     adj = get_adj_list(matrix)
     n = len(matrix)
-
-    # Степени
     degrees = {i: len(adj[i]) for i in range(n)}
 
-    # Компоненты связности
     visited = [False] * n
     comps = []
 
@@ -229,14 +225,12 @@ def task_0(matrix):
             dfs(v, c);
             comps.append(c)
 
-    # Эйлеровость
     odd = sum(1 for d in degrees.values() if d % 2)
     if len(comps) == 1:
         euler = "Эйлеров" if odd == 0 else ("Полуэйлеров" if odd == 2 else "Не эйлеров")
     else:
         euler = "Несвязный"
 
-    # Двудольность
     color = [-1] * n
     ok = True
     for s in range(n):
@@ -254,7 +248,8 @@ def task_0(matrix):
 
     node_colors = {}
     if ok:
-        for i in range(n): node_colors[i] = "#4ecdc4" if color[i] == 0 else "#ffe66d"
+        for i in range(n):
+            node_colors[i] = "#4ecdc4" if color[i] == 0 else "#ffe66d"
         set_a = [i for i in range(n) if color[i] == 0]
         set_b = [i for i in range(n) if color[i] == 1]
         is_complete = all(matrix[a][b] for a in set_a for b in set_b)
@@ -268,7 +263,8 @@ def task_0(matrix):
             "euler": euler, "bipartite": bipartite, "vis": vis}
 
 
-def task_1_3(matrix, mode='dfs'):
+# ============ DFS / BFS ============
+def task_dfs_bfs(matrix, mode='dfs'):
     adj = get_adj_list(matrix)
     n = len(matrix)
     visited = [False] * n
@@ -280,11 +276,13 @@ def task_1_3(matrix, mode='dfs'):
             visited[v] = True;
             order.append(v)
             for u in adj[v]:
-                if not visited[u]: edges.append((v, u)); go(u)
+                if not visited[u]:
+                    edges.append((v, u));
+                    go(u)
 
         for v in range(n):
             if not visited[v]: go(v)
-    else:  # bfs
+    else:
         for s in range(n):
             if not visited[s]:
                 q = [s];
@@ -303,11 +301,14 @@ def task_1_3(matrix, mode='dfs'):
     return {"order": order, "path": " → ".join(map(str, order)), "vis": vis}
 
 
-def task_2_4(matrix, user_order, mode='dfs'):
-    correct = task_1_3(matrix, mode)['order']
-    return {"correct": correct, "user": user_order, "ok": user_order == correct}
+# ============ ПРОВЕРКА DFS / BFS ============
+def task_check_dfs_bfs(matrix, user_order, mode='dfs'):
+    correct = task_dfs_bfs(matrix, mode)['order']
+    vis = draw_graph(matrix, f"task_check_{mode}.html")
+    return {"correct": correct, "user": user_order, "ok": user_order == correct, "vis": vis}
 
 
+# ============ ЗАДАЧА 5 ============
 def task_5(matrix):
     adj = get_adj_list(matrix)
     n = len(matrix)
@@ -329,22 +330,21 @@ def task_5(matrix):
     colors = ["#ff6b6b", "#4ecdc4", "#ffe66d", "#96ceb4", "#45b7d1", "#dfe6e9"]
     node_colors = {}
     for i, comp in enumerate(comps):
-        for v in comp: node_colors[v] = colors[i % len(colors)]
+        for v in comp:
+            node_colors[v] = colors[i % len(colors)]
 
     vis = draw_graph(matrix, "task5.html", node_colors=node_colors)
     return {"count": len(comps), "comps": comps, "vis": vis}
 
+
+# ============ ЗАДАЧА 6 ============
 def task_6_check(matrix, user_answer):
     correct = task_5(matrix)['count']
     vis = task_5(matrix)['vis']
-    return {
-        "correct": correct,
-        "user": user_answer,
-        "ok": correct == user_answer,
-        "vis": vis
-    }
+    return {"correct": correct, "user": user_answer, "ok": correct == user_answer, "vis": vis}
 
 
+# ============ ЗАДАЧА 7 (Прим) ============
 def task_7(matrix):
     n = len(matrix)
     INF = float('inf')
@@ -371,6 +371,7 @@ def task_7(matrix):
     return {"edges": mst, "weight": total, "vis": vis}
 
 
+# ============ ЗАДАЧА 8 (Дейкстра) ============
 def task_8(matrix, start):
     n = len(matrix)
     INF = float('inf')
@@ -390,13 +391,15 @@ def task_8(matrix, start):
 
     edges = []
     for p in paths:
-        for i in range(len(p) - 1): edges.append((p[i], p[i + 1]))
+        for i in range(len(p) - 1):
+            edges.append((p[i], p[i + 1]))
 
     vis = draw_graph(matrix, "task8.html", highlight_edges=edges, highlight_nodes=[start])
     return {"dist": {i: dist[i] for i in range(n) if dist[i] != INF},
             "path": {i: paths[i] for i in range(n) if dist[i] != INF and i != start}, "vis": vis}
 
 
+# ============ ЗАДАЧА 9 (Флойд) ============
 def task_9(matrix):
     n = len(matrix)
     INF = float('inf')
@@ -405,15 +408,18 @@ def task_9(matrix):
         d[i][i] = 0
         for j in range(n):
             if matrix[i][j]: d[i][j] = matrix[i][j]
+
     for k in range(n):
         for i in range(n):
             for j in range(n):
                 d[i][j] = min(d[i][j], d[i][k] + d[k][j])
+
     result = [[str(int(d[i][j])) if d[i][j] != INF else "∞" for j in range(n)] for i in range(n)]
     vis = draw_graph(matrix, "task9.html")
     return {"matrix": result, "vis": vis}
 
 
+# ============ ЗАДАЧА 10 (Прюфер - кодирование) ============
 def task_10(matrix):
     adj = get_adj_list(matrix)
     n = len(matrix)
@@ -432,17 +438,20 @@ def task_10(matrix):
     return {"code": code, "vis": vis}
 
 
+# ============ ЗАДАЧА 11 (Прюфер - декодирование) ============
 def task_11(code, n):
     deg = [1] * n
     for v in code: deg[v] += 1
+
     edges = []
     for v in code:
         leaf = next(i for i in range(n) if deg[i] == 1)
         edges.append((leaf, v))
         deg[leaf] -= 1;
         deg[v] -= 1
+
     rest = [i for i in range(n) if deg[i] == 1]
-    edges.append(tuple(rest))
+    edges.append((rest[0], rest[1]))
 
     mat = [[0] * n for _ in range(n)]
     for u, v in edges: mat[u][v] = mat[v][u] = 1
@@ -450,6 +459,7 @@ def task_11(code, n):
     return {"edges": edges, "vis": vis}
 
 
+# ============ ЗАДАЧА 12 (Раскраска) ============
 def task_12(matrix):
     adj = get_adj_list(matrix)
     n = len(matrix)
@@ -480,7 +490,7 @@ def index():
 @app.route('/solve', methods=['POST'])
 def solve():
     data = request.json
-    task = str(data['task'])  # <-- ПРИНУДИТЕЛЬНО В СТРОКУ
+    task = str(data['task'])
     matrix = parse_matrix(data['matrix'])
     extra = data.get('extra', '').strip()
 
@@ -507,13 +517,13 @@ def solve():
         if task == '0':
             r = task_0(matrix)
         elif task == '1':
-            r = task_1_3(matrix, 'dfs')
+            r = task_dfs_bfs(matrix, 'dfs')
         elif task == '2':
-            r = task_2_4(matrix, extra_val, 'dfs')
+            r = task_check_dfs_bfs(matrix, extra_val, 'dfs')
         elif task == '3':
-            r = task_1_3(matrix, 'bfs')
+            r = task_dfs_bfs(matrix, 'bfs')
         elif task == '4':
-            r = task_2_4(matrix, extra_val, 'bfs')
+            r = task_check_dfs_bfs(matrix, extra_val, 'bfs')
         elif task == '5':
             r = task_5(matrix)
         elif task == '6':
@@ -562,9 +572,12 @@ index.html:
         label { display: block; margin: 12px 0 5px; font-weight: bold; color: #444; font-size: 14px; }
         select, textarea, input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-family: monospace; }
         textarea { min-height: 120px; }
-        button { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 15px; }
-        button:hover { background: #5a6fd6; }
-        .hint { background: #f0f4ff; padding: 10px; border-radius: 8px; font-size: 12px; color: #667eea; margin-bottom: 15px; }
+        button { width: 100%; padding: 12px; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 8px; }
+        .btn-solve { background: #667eea; }
+        .btn-solve:hover { background: #5a6fd6; }
+        .btn-example { background: #4ecdc4; }
+        .btn-example:hover { background: #45b7b0; }
+        .hint { background: #f0f4ff; padding: 10px; border-radius: 8px; font-size: 13px; color: #667eea; margin-bottom: 15px; }
         #extraBlock { display: none; }
         .result { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; font-size: 14px; }
         .result p { margin: 5px 0; }
@@ -575,14 +588,16 @@ index.html:
         table { border-collapse: collapse; margin-top: 10px; }
         td { border: 1px solid #ddd; padding: 6px 10px; text-align: center; font-size: 13px; }
         .color-box { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 5px; vertical-align: middle; }
+        .error-msg { color: #f44336; padding: 10px; background: #ffebee; border-radius: 8px; margin-top: 10px; }
         @media (max-width: 800px) { .container { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- ЛЕВАЯ ПАНЕЛЬ -->
         <div class="panel">
             <h1>📊 Графы</h1>
-            <h2>Дискретные структуры</h2>
+            <h2>Дискретные структуры — проект</h2>
 
             <label>Задача:</label>
             <select id="task" onchange="changeTask()">
@@ -593,70 +608,102 @@ index.html:
                 <option value="4">4 — BFS обход (проверить)</option>
                 <option value="5">5 — Компоненты связности</option>
                 <option value="6">6 — Компоненты связности (проверить)</option>
-                <option value="7">7 — Мин. остовное дерево (Прим)</option>
+                <option value="7">7 — Минимальное остовное дерево</option>
                 <option value="8">8 — Кратчайшие пути (Дейкстра)</option>
                 <option value="9">9 — Матрица кратчайших путей</option>
-                <option value="10">10 — Код Прюфера</option>
+                <option value="10">10 — Кодирование Прюфера</option>
                 <option value="11">11 — Декодирование Прюфера</option>
                 <option value="12">12 — Раскраска графа</option>
             </select>
 
-            <div class="hint" id="hint">Пример: 0 1 0\n1 0 1\n0 1 0</div>
+            <div class="hint" id="hint">Нажмите «📋 Вставить пример» или введите свою матрицу</div>
 
             <label>Матрица смежности:</label>
-            <textarea id="matrix">0 1 0
+            <textarea id="matrix" placeholder="Введите матрицу смежности...">0 1 0
 1 0 1
 0 1 0</textarea>
 
+            <button class="btn-example" onclick="loadExample()">📋 Вставить пример</button>
+
             <div id="extraBlock">
-                <label>Доп. данные:</label>
-                <input type="text" id="extra" placeholder="Например: 0 1 2">
+                <label>Дополнительные данные:</label>
+                <input type="text" id="extra" placeholder="">
             </div>
 
-            <button onclick="solve()">▶ Выполнить</button>
-            <div class="result" id="result"></div>
+            <button class="btn-solve" onclick="solve()">▶ Выполнить</button>
+            <div id="result"></div>
         </div>
 
+        <!-- ПРАВАЯ ПАНЕЛЬ -->
         <div class="panel">
             <h1>🎨 Визуализация</h1>
             <div class="graph-frame" id="graph">
                 <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:18px;">
-                    Нажмите "Выполнить"
+                    Нажмите «Выполнить»
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const hints = {
-            0: 'Анализ всех свойств графа',
-            1: 'Покажет порядок DFS обхода',
-            2: 'Введите ваш DFS обход (цифры через пробел)',
-            3: 'Покажет порядок BFS обхода',
-            4: 'Введите ваш BFS обход (цифры через пробел)',
-            5: 'Найдёт все компоненты связности',
-            6: 'Введите число компонент',
-            7: 'Граф может быть взвешенным (веса в матрице)',
-            8: 'Введите номер стартовой вершины',
-            9: 'Построит матрицу всех кратчайших путей',
-            10: 'Граф должен быть деревом!',
-            11: 'Введите код Прюфера через пробел',
-            12: 'Раскрасит граф жадным алгоритмом'
+        // ============ ПРИМЕРЫ ДЛЯ КАЖДОЙ ЗАДАЧИ ============
+        const examples = {
+            '0': `0 1 1 0\n1 0 1 0\n1 1 0 1\n0 0 1 0`,
+            '1': `0 1 1 0\n1 0 0 1\n1 0 0 1\n0 1 1 0`,
+            '2': `0 1 0 0\n1 0 1 0\n0 1 0 1\n0 0 1 0`,
+            '3': `0 1 1 0\n1 0 0 1\n1 0 0 1\n0 1 1 0`,
+            '4': `0 1 0 1\n1 0 1 0\n0 1 0 1\n1 0 1 0`,
+            '5': `0 1 0 0 0\n1 0 0 0 0\n0 0 0 1 0\n0 0 1 0 0\n0 0 0 0 0`,
+            '6': `0 1 0 0\n1 0 0 0\n0 0 0 1\n0 0 1 0`,
+            '7': `0 2 0 6 0\n2 0 3 8 5\n0 3 0 0 7\n6 8 0 0 9\n0 5 7 9 0`,
+            '8': `0 4 0 0 0 0\n4 0 8 0 0 0\n0 8 0 7 0 4\n0 0 7 0 9 0\n0 0 0 9 0 10\n0 0 4 0 10 0`,
+            '9': `0 3 0 7\n3 0 1 0\n0 1 0 2\n7 0 2 0`,
+            '10': `0 1 1 0 0\n1 0 0 1 1\n1 0 0 0 0\n0 1 0 0 0\n0 1 0 0 0`,
+            '11': `0 0 1 0 0\n0 0 0 1 1\n1 0 0 0 0\n0 1 0 0 0\n0 1 0 0 0`,
+            '12': `0 1 1 0\n1 0 1 0\n1 1 0 1\n0 0 1 0`
         };
 
-        function changeTask() {
-            const t = document.getElementById('task').value;
-            document.getElementById('hint').textContent = hints[t] || '';
-            document.getElementById('extraBlock').style.display = ['2','4','6','8','11'].includes(t) ? 'block' : 'none';
+        function loadExample() {
+            const task = document.getElementById('task').value;
+            if (examples[task]) {
+                document.getElementById('matrix').value = examples[task];
+                document.getElementById('hint').innerHTML = '✅ Пример загружен! Можете нажать «Выполнить»';
+            }
         }
-        changeTask();
 
+        function changeTask() {
+            const task = document.getElementById('task').value;
+            const extraBlock = document.getElementById('extraBlock');
+            const hint = document.getElementById('hint');
+
+            // Показываем доп. поле только для нужных задач
+            const tasksWithExtra = ['2', '4', '6', '8', '11'];
+            extraBlock.style.display = tasksWithExtra.includes(task) ? 'block' : 'none';
+
+            // Подсказки для доп. поля
+            const extraHints = {
+                '2': '💡 Введите ваш DFS обход через пробел (например: 0 1 2 3)',
+                '4': '💡 Введите ваш BFS обход через пробел (например: 0 1 3 2)',
+                '6': '💡 Введите ОДНО число — количество компонент',
+                '8': '💡 Введите номер стартовой вершины (например: 0)',
+                '11': '💡 Введите код Прюфера через пробел (например: 1 1 1)'
+            };
+
+            if (extraHints[task]) {
+                hint.innerHTML = extraHints[task];
+            } else {
+                hint.innerHTML = 'Нажмите «📋 Вставить пример» или введите свою матрицу';
+            }
+        }
+
+        // ============ ОТПРАВКА ЗАДАЧИ ============
         function solve() {
             const task = document.getElementById('task').value;
             const matrix = document.getElementById('matrix').value;
             const extra = document.getElementById('extra').value;
+            const resultDiv = document.getElementById('result');
 
-            document.getElementById('result').innerHTML = '⏳ Считаем...';
+            resultDiv.innerHTML = '<p>⏳ Считаем...</p>';
 
             fetch('/solve', {
                 method: 'POST',
@@ -666,497 +713,118 @@ index.html:
             .then(r => r.json())
             .then(data => {
                 if (!data.ok) {
-                    document.getElementById('result').innerHTML = `<p style="color:red">❌ ${data.error}</p>`;
+                    resultDiv.innerHTML = `<div class="error-msg">❌ ${data.error}</div>`;
                     return;
                 }
 
                 const r = data.result;
-                let html = '';
+                let html = '<div class="result"><h3>✅ Результат:</h3>';
 
-                if (task == 0) {
-                    html += '<b>Степени:</b><br>';
-                    for (let [v,d] of Object.entries(r.degrees)) html += `Вершина ${v}: ${d}<br>`;
-                    html += `<br><b>Компонент:</b> ${r.components}<br>`;
-                    html += `<b>Эйлеровость:</b> ${r.euler}<br>`;
-                    html += `<b>Двудольность:</b> ${r.bipartite}`;
+                // Задача 0
+                if (task === '0') {
+                    html += '<p><b>Степени вершин:</b></p>';
+                    for (let [v, d] of Object.entries(r.degrees))
+                        html += `<p>Вершина ${v}: степень ${d}</p>`;
+                    html += `<p><b>Компонент связности:</b> ${r.components}</p>`;
+                    html += `<p><b>Эйлеровость:</b> ${r.euler}</p>`;
+                    html += `<p><b>Двудольность:</b> ${r.bipartite}</p>`;
                 }
-                else if (task == 1 || task == 3) html += `<b>Обход:</b><br>${r.path}`;
-                else if (task == 2 || task == 4) {
-                    html += `Ваш: ${r.user.join(' → ')}<br>`;
-                    html += `Верный: ${r.correct.join(' → ')}<br>`;
-                    html += r.ok ? '<span class="ok">✓ Правильно!</span>' : '<span class="bad">✗ Ошибка</span>';
+
+                // Задачи 1, 3
+                else if (task === '1' || task === '3') {
+                    html += `<p><b>Обход:</b> ${r.path}</p>`;
                 }
-                else if (task == 5) {
-                    html += `<b>Компонент:</b> ${r.count}<br>`;
-                    r.comps.forEach((c,i) => html += `К${i+1}: {${c.join(', ')}}<br>`);
+
+                // Задачи 2, 4
+                else if (task === '2' || task === '4') {
+                    html += `<p>Ваш обход: ${r.user.join(' → ')}</p>`;
+                    html += `<p>Правильный: ${r.correct.join(' → ')}</p>`;
+                    html += r.ok ? '<p class="ok">✓ Правильно!</p>' : '<p class="bad">✗ Неправильно</p>';
                 }
-                else if (task == 6) {
-                    html += `Ваш ответ: ${extra}<br>Верный: ${r.correct}<br>`;
-                    html += r.ok ? '<span class="ok">✓ Правильно!</span>' : '<span class="bad">✗ Ошибка</span>';
+
+                // Задача 5
+                else if (task === '5') {
+                    html += `<p><b>Число компонент:</b> ${r.count}</p>`;
+                    r.comps.forEach((c, i) => {
+                        html += `<p>Компонента ${i+1}: {${c.join(', ')}}</p>`;
+                    });
                 }
-                else if (task == 7) {
-                    html += '<b>Рёбра MST:</b><br>';
-                    r.edges.forEach(e => html += `${e[0]}—${e[1]} (вес ${e[2]})<br>`);
-                    html += `<b>Общий вес:</b> ${r.weight}`;
+
+                // Задача 6
+                else if (task === '6') {
+                    html += `<p>Ваш ответ: ${r.user}</p>`;
+                    html += `<p>Правильный: ${r.correct}</p>`;
+                    html += r.ok ? '<p class="ok">✓ Правильно!</p>' : '<p class="bad">✗ Неправильно</p>';
                 }
-                else if (task == 8) {
-                    for (let [v,d] of Object.entries(r.dist))
-                        html += `До ${v}: ${d} (путь: ${r.path[v]?.join('→') || '-'})<br>`;
+
+                // Задача 7
+                else if (task === '7') {
+                    html += '<p><b>Рёбра минимального остовного дерева:</b></p>';
+                    r.edges.forEach(e => {
+                        html += `<p>${e[0]} — ${e[1]} (вес: ${e[2]})</p>`;
+                    });
+                    html += `<p><b>Общий вес:</b> ${r.weight}</p>`;
                 }
-                else if (task == 9) {
-                    html += '<table>';
+
+                // Задача 8
+                else if (task === '8') {
+                    html += '<p><b>Кратчайшие расстояния:</b></p>';
+                    for (let [v, d] of Object.entries(r.dist)) {
+                        const path = r.path[v] ? r.path[v].join(' → ') : '-';
+                        html += `<p>До вершины ${v}: ${d} (путь: ${path})</p>`;
+                    }
+                }
+
+                // Задача 9
+                else if (task === '9') {
+                    html += '<p><b>Матрица кратчайших путей:</b></p><table>';
                     r.matrix.forEach(row => {
                         html += '<tr>' + row.map(c => `<td>${c}</td>`).join('') + '</tr>';
                     });
                     html += '</table>';
                 }
-                else if (task == 10) html += `<b>Код Прюфера:</b> [${r.code.join(', ')}]`;
-                else if (task == 11) {
-                    html += '<b>Рёбра:</b><br>';
-                    r.edges.forEach(e => html += `${e[0]} — ${e[1]}<br>`);
-                }
-                else if (task == 12) {
-                    html += '<b>Раскраска:</b><br>';
-                    for (let [c,hex] of Object.entries(r.legend))
-                        html += `<span class="color-box" style="background:${hex}"></span>${c}<br>`;
-                    for (let [v,c] of Object.entries(r.colors))
-                        html += `Вершина ${v} → цвет ${c}<br>`;
-                    html += `<b>Хроматическое число:</b> ${r.chromatic}`;
+
+                // Задача 10
+                else if (task === '10') {
+                    html += `<p><b>Код Прюфера:</b> [${r.code.join(', ')}]</p>`;
                 }
 
-                document.getElementById('result').innerHTML = html;
+                // Задача 11
+                else if (task === '11') {
+                    html += '<p><b>Рёбра дерева:</b></p>';
+                    r.edges.forEach(e => {
+                        html += `<p>${e[0]} — ${e[1]}</p>`;
+                    });
+                }
 
-                // Визуализация
+                // Задача 12
+                else if (task === '12') {
+                    html += '<p><b>Раскраска:</b></p>';
+                    for (let [color, hex] of Object.entries(r.legend))
+                        html += `<p><span class="color-box" style="background:${hex}"></span>${color}</p>`;
+                    html += '<br>';
+                    for (let [v, c] of Object.entries(r.colors))
+                        html += `<p>Вершина ${v} → цвет ${c}</p>`;
+                    html += `<p><b>Хроматическое число:</b> ${r.chromatic}</p>`;
+                }
+
+                html += '</div>';
+                resultDiv.innerHTML = html;
+
+                // Обновляем визуализацию
                 if (r.vis) {
                     document.getElementById('graph').innerHTML =
                         `<iframe src="/static/visuals/${r.vis}?t=${Date.now()}"></iframe>`;
                 }
             })
             .catch(err => {
-                document.getElementById('result').innerHTML = `<p style="color:red">Ошибка: ${err}</p>`;
+                resultDiv.innerHTML = `<div class="error-msg">❌ Ошибка соединения: ${err}</div>`;
             });
         }
+
+        // Инициализация
+        changeTask();
     </script>
 </body>
 </html>
-```
-
-Презентация руководителя
-```
-\documentclass[12pt,aspectratio=169]{beamer}
-\usepackage[utf8]{inputenc}
-\usepackage[T2A]{fontenc}
-\usepackage[russian]{babel}
-\usepackage{graphicx}
-\usepackage{listings}
-\usepackage{xcolor}
-\usepackage{tikz}
-
-% Цвета
-\definecolor{mainblue}{RGB}{102, 126, 234}
-\definecolor{codebg}{RGB}{240, 244, 255}
-\definecolor{lightbg}{RGB}{248, 249, 250}
-\definecolor{hardred}{RGB}{220, 50, 50}
-
-% Тема
-\usetheme{Madrid}
-\setbeamercolor{title}{fg=white, bg=mainblue}
-\setbeamercolor{frametitle}{fg=white, bg=mainblue}
-\setbeamercolor{structure}{fg=mainblue}
-\setbeamercolor{block title}{fg=white, bg=mainblue}
-\setbeamercolor{block body}{fg=black, bg=lightbg}
-\setbeamertemplate{navigation symbols}{}
-\setbeamertemplate{itemize item}[circle]
-
-% Настройка листинга
-\lstset{
-    language=Python,
-    basicstyle=\ttfamily\scriptsize,
-    backgroundcolor=\color{codebg},
-    frame=single,
-    framerule=0.5pt,
-    rulecolor=\color{mainblue!50},
-    numbers=left,
-    numbersep=5pt,
-    numberstyle=\tiny\color{gray},
-    keywordstyle=\color{blue}\bfseries,
-    stringstyle=\color{red},
-    commentstyle=\color{green!40!black},
-    showstringspaces=false,
-    breaklines=true,
-    tabsize=4,
-    aboveskip=6pt,
-    belowskip=6pt
-}
-
-\title{Работа с графами}
-\subtitle{Проект по дискретным структурам}
-\author{Выполнили студенты 02262-ДБ}
-\date{Белоусов Александр \quad Унжаков Александр \quad Зенкин Евгений}
-
-\begin{document}
-
-% ==================== ТИТУЛЬНЫЙ ====================
-\begin{frame}
-    \titlepage
-    \begin{center}
-        
-    \end{center}
-\end{frame}
-
-% ==================== ЗНАКОМСТВО С ГРУППОЙ ====================
-\begin{frame}
-    \frametitle{Знакомство с группой}
-    
-    \vspace{-10pt}
-    \begin{columns}[T]
-        \column{0.33\textwidth}
-            \begin{center}
-                \fbox{%
-                \begin{tikzpicture}
-                    \fill[mainblue!10] (0,0) rectangle (3,3.5);
-                    \node at (1.5,2.5) {\large ��};
-                    \node at (1.5,1.5) {\small Фото};
-                \end{tikzpicture}%
-                }
-                \vspace{5pt}
-                
-                \textbf{Белоусов Александр}
-            \end{center}
-            
-        \column{0.33\textwidth}
-            \begin{center}
-                \fbox{%
-                \begin{tikzpicture}
-                    \fill[mainblue!10] (0,0) rectangle (3,3.5);
-                    \node at (1.5,2.5) {\large ��};
-                    \node at (1.5,1.5) {\small Фото};
-                \end{tikzpicture}%
-                }
-                \vspace{5pt}
-                
-                \textbf{Унжаков Александр}
-            \end{center}
-            
-        \column{0.33\textwidth}
-            \begin{center}
-                \fbox{%
-                \begin{tikzpicture}
-                    \fill[mainblue!10] (0,0) rectangle (3,3.5);
-                    \node at (1.5,2.5) {\large ��};
-                    \node at (1.5,1.5) {\small Фото};
-                \end{tikzpicture}%
-                }
-                \vspace{5pt}
-                
-                \textbf{Зенкин Евгений}
-            \end{center}
-    \end{columns}
-\end{frame}
-
-% ==================== ЧТО СДЕЛАЛИ ====================
-\begin{frame}
-    \frametitle{Обзор проекта}
-    
-    \begin{block}{Что сделано}
-        \begin{itemize}
-            \item Веб-приложение для работы с графами
-            \item Реализовано \textbf{13 задач} (0--12) по дискретным структурам
-            \item Визуализация графов в браузере
-            \item Проверка пользовательских ответов
-            \item Поддержка взвешенных и невзвешенных графов
-        \end{itemize}
-    \end{block}
-    
-    \vspace{8pt}
-    \begin{block}{Технологии}
-        \begin{itemize}
-            \item Python + Flask (серверная часть, \textasciitilde200 строк)
-            \item PyVis (визуализация графов)
-            \item HTML/CSS/JavaScript (интерфейс, \textasciitilde170 строк)
-        \end{itemize}
-    \end{block}
-\end{frame}
-
-% ==================== РАСПРЕДЕЛЕНИЕ ЗАДАЧ ====================
-\begin{frame}
-    \frametitle{Распределение задач}
-    
-    \begin{columns}[T]
-        \column{0.3\textwidth}
-            \begin{block}{Белоусов Александр}
-                \begin{itemize}
-                    \item Задача 0 — Анализ графа
-                \end{itemize}
-                \vspace{5pt}
-                \begin{center}
-                    \textbf{1 задача}
-                \end{center}
-            \end{block}
-            
-        \column{0.3\textwidth}
-            \begin{block}{Унжаков Александр}
-                \begin{itemize}
-                    \item Задачи 1-6
-                    \item Интерфейс (HTML/CSS)
-                \end{itemize}
-                \vspace{5pt}
-                \begin{center}
-                    \textbf{6 задач}
-                \end{center}
-            \end{block}
-            
-        \column{0.3\textwidth}
-            \begin{block}{Зенкин Евгений}
-                \begin{itemize}
-                    \item Задачи 7-12
-                    \item Визуализация (PyVis)
-                \end{itemize}
-                \vspace{5pt}
-                \begin{center}
-                    \textbf{6 задач}
-                \end{center}
-            \end{block}
-    \end{columns}
-\end{frame}
-
-% ==================== САМЫЕ СЛОЖНЫЕ ЗАДАЧИ ====================
-\begin{frame}
-    \frametitle{Три самые сложные задачи}
-    
-    \begin{columns}[T]
-        \column{0.3\textwidth}
-            \begin{block}{\centering Задача 7 \\ Алгоритм Прима}
-                \begin{itemize}
-                    \item Работа с весами
-                    \item Поиск минимального ребра
-                    \item Построение дерева
-                \end{itemize}
-                \vspace{5pt}
-                \begin{center}
-                    \textcolor{hardred}{\textbf{Сложность: 4 из 5}}
-                \end{center}
-            \end{block}
-            
-        \column{0.3\textwidth}
-            \begin{block}{\centering Задача 10-11 \\ Код Прюфера}
-                \begin{itemize}
-                    \item Кодирование дерева
-                    \item Обратное восстановление
-                    \item Работа со степенями
-                \end{itemize}
-                \vspace{5pt}
-                \begin{center}
-                    \textcolor{hardred}{\textbf{Сложность: 4 из 5}}
-                \end{center}
-            \end{block}
-            
-        \column{0.3\textwidth}
-            \begin{block}{\centering Задача 12 \\ Раскраска}
-                \begin{itemize}
-                    \item Жадный алгоритм
-                    \item Хроматическое число
-                    \item Минимизация цветов
-                \end{itemize}
-                \vspace{5pt}
-                \begin{center}
-                    \textcolor{hardred}{\textbf{Сложность: 3 из 5}}
-                \end{center}
-            \end{block}
-    \end{columns}
-    
-    \vspace{10pt}
-    \begin{center}
-        \small\textit{Сложности возникали из-за неочевидной логики алгоритмов \\ и необходимости визуализации промежуточных результатов}
-    \end{center}
-\end{frame}
-
-% ==================== ЗАДАЧИ (СПИСОК) ====================
-\begin{frame}
-    \frametitle{Все задачи проекта}
-    
-    \begin{columns}[T]
-        \column{0.45\textwidth}
-            \begin{block}{Анализ и обходы}
-                \begin{enumerate}
-                    \setcounter{enumi}{-1}
-                    \item Степени, компоненты, Эйлеров, двудольный
-                    \item DFS обход (показать)
-                    \item DFS обход (проверить)
-                    \item BFS обход (показать)
-                    \item BFS обход (проверить)
-                    \item Число компонент связности
-                    \item Проверка числа компонент
-                \end{enumerate}
-            \end{block}
-            
-        \column{0.45\textwidth}
-            \begin{block}{Алгоритмы}
-                \begin{enumerate}
-                    \setcounter{enumi}{6}
-                    \item Минимальное остовное дерево
-                    \item Кратчайшие пути (Дейкстра)
-                    \item Матрица кратчайших путей
-                    \item Кодирование Прюфера
-                    \item Декодирование Прюфера
-                    \item Раскраска графа
-                \end{enumerate}
-            \end{block}
-    \end{columns}
-    
-\end{frame}
-
-% ==================== ПРИМЕР: DFS ====================
-\begin{frame}[fragile]
-    \frametitle{Пример: Обход в глубину (задача 1)}
-    
-    \begin{lstlisting}
-def task_dfs(matrix):
-    adj = get_adj_list(matrix)
-    n = len(matrix)
-    visited = [False] * n
-    order = []
-    
-    def go(v):
-        visited[v] = True
-        order.append(v)
-        for u in adj[v]:
-            if not visited[u]:
-                go(u)
-    
-    for v in range(n):
-        if not visited[v]:
-            go(v)
-    
-    return order  # например: [0, 1, 3, 2]
-    \end{lstlisting}
-    
-    \begin{center}
-        \footnotesize Рекурсивный обход: идём вглубь до упора, затем возвращаемся
-    \end{center}
-\end{frame}
-
-% ==================== ПРИМЕР: ДЕЙКСТРА ====================
-\begin{frame}[fragile]
-    \frametitle{Пример: Алгоритм Дейкстры (задача 8)}
-    
-    \begin{lstlisting}
-def task_dijkstra(matrix, start):
-    n = len(matrix)
-    dist = [float('inf')] * n
-    dist[start] = 0
-    used = [False] * n
-    
-    for _ in range(n):
-        v = min((i for i in range(n) if not used[i]), 
-                key=lambda i: dist[i], default=-1)
-        if v == -1: break
-        used[v] = True
-        for u in range(n):
-            if matrix[v][u] and not used[u]:
-                new = dist[v] + matrix[v][u]
-                if new < dist[u]:
-                    dist[u] = new
-    
-    return dist  # кратчайшие расстояния до всех вершин
-    \end{lstlisting}
-\end{frame}
-
-% ==================== ВИЗУАЛИЗАЦИЯ ====================
-\begin{frame}
-    \frametitle{Визуализация графов}
-    
-    \begin{columns}[T]
-        \column{0.45\textwidth}
-            \begin{block}{PyVis}
-                \begin{itemize}
-                    \item Интерактивный граф
-                    \item Перетаскивание вершин
-                    \item Масштабирование
-                    \item Цветовая индикация
-                \end{itemize}
-            \end{block}
-            
-            \vspace{3pt}
-            \begin{block}{Обозначения}
-                \begin{itemize}
-                    \item \textcolor{red}{Красные} рёбра — путь/обход
-                    \item \textcolor{gray}{Серые} — остальные
-                    \item Цвет вершин — компоненты
-                \end{itemize}
-            \end{block}
-            
-        \column{0.55\textwidth}
-            \begin{center}
-                \begin{tikzpicture}[scale=0.55, every node/.style={transform shape}]
-                    \node[circle, draw=mainblue, fill=mainblue!20, minimum size=0.6cm] (0) at (0,1.5) {0};
-                    \node[circle, draw=mainblue, fill=mainblue!20, minimum size=0.6cm] (1) at (2.5,2.5) {1};
-                    \node[circle, draw=mainblue, fill=mainblue!20, minimum size=0.6cm] (2) at (5,2.5) {2};
-                    \node[circle, draw=mainblue, fill=mainblue!20, minimum size=0.6cm] (3) at (2.5,0) {3};
-                    \node[circle, draw=mainblue, fill=mainblue!20, minimum size=0.6cm] (4) at (5,0) {4};
-                    
-                    \draw[very thick, red!70] (0) -- (1) node[midway, above left, font=\tiny] {2};
-                    \draw[thick, gray!50] (1) -- (2) node[midway, above, font=\tiny] {3};
-                    \draw[very thick, red!70] (0) -- (3) node[midway, left, font=\tiny] {6};
-                    \draw[thick, gray!50] (1) -- (3) node[midway, right, font=\tiny] {8};
-                    \draw[very thick, red!70] (1) -- (4) node[midway, right, font=\tiny] {5};
-                    \draw[thick, gray!50] (2) -- (4) node[midway, right, font=\tiny] {7};
-                    \draw[thick, gray!50] (3) -- (4) node[midway, below, font=\tiny] {9};
-                \end{tikzpicture}
-                
-                \vspace{3pt}
-                \footnotesize MST: красные рёбра — остовное дерево
-            \end{center}
-    \end{columns}
-\end{frame}
-
-% ==================== ЗАКЛЮЧЕНИЕ ====================
-\begin{frame}
-    \frametitle{Заключение}
-    
-    \begin{columns}[T]
-        \column{0.45\textwidth}
-            \begin{block}{Результаты}
-                \begin{itemize}
-                    \item Реализованы все 13 задач
-                    \item Работающий веб-интерфейс
-                    \item Интерактивная визуализация
-                    \item Проверка ответов пользователя
-                    \item Поддержка разных типов графов
-                \end{itemize}
-            \end{block}
-            
-        \column{0.45\textwidth}
-            \begin{block}{Алгоритмы}
-                \begin{itemize}
-                    \item DFS и BFS
-                    \item Алгоритм Прима (MST)
-                    \item Алгоритм Дейкстры
-                    \item Флойд-Уоршелл
-                    \item Кодирование Прюфера
-                    \item Жадная раскраска
-                \end{itemize}
-            \end{block}
-    \end{columns}
-    
-\end{frame}
-
-% ==================== ФИНАЛ ====================
-\begin{frame}
-    \begin{center}
-        \Huge\textcolor{mainblue}{Спасибо за внимание!}
-        
-        \vspace{25pt}
-        \Large Вопросы?
-        
-        \vspace{30pt}
-        \normalsize
-        Белоусов Александр \quad Унжаков Александр \quad Зенкин Евгений
-        
-        \vspace{5pt}
-        Группа 02262-ДБ
-    \end{center}
-\end{frame}
-
-\end{document}
 ```
